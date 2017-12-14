@@ -6,7 +6,7 @@
 /*   By: rmurdoch <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 18:40:32 by rmurdoch          #+#    #+#             */
-/*   Updated: 2017/12/01 18:40:41 by rmurdoch         ###   ########.fr       */
+/*   Updated: 2017/12/14 17:01:27 by rmurdoch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@ void	read_line(char **sv, int *rsize, char **t, int fd)
 	while (!ft_strchr(*sv, '\n') && *rsize > 0)
 	{
 		*t = ft_strdup(*sv);
-		*sv = (char *)malloc(BUFF_SIZE + ft_strlen(*t));
+		if (*sv)
+			free(*sv);
+		*sv = (char *)ft_memalloc(BUFF_SIZE + ft_strlen(*t) + 1);
 		ft_strcpy(*sv, *t);
 		*rsize = read(fd, (*sv + ft_strlen(*t)), BUFF_SIZE);
-		*(*sv + ft_strlen(*t) + BUFF_SIZE) = '\0';
+		*(*sv + ft_strlen(*t) + *rsize) = '\0';
 		free(*t);
 	}
 }
@@ -31,11 +33,6 @@ int		chk_sv(char **sv, char **t, char ***line)
 
 	if (ft_strchr(*sv, '\n'))
 	{
-		if (ft_strlen(*sv) == 1)
-		{
-			ft_strdel(sv);
-			return (0);
-		}
 		*t = ft_strchr(*sv, '\n') + 1;
 		*(ft_strchr(*sv, '\n')) = '\0';
 		**line = ft_strdup(*sv);
@@ -46,9 +43,20 @@ int		chk_sv(char **sv, char **t, char ***line)
 			ft_strdel(&t2);
 		}
 		else
+		{
 			ft_strdel(sv);
-		
-		return (0);
+			return (0);
+		}
+	}
+	return (1);
+}
+
+int		reset(char **sv, char **t, char ***line, int *rsize)
+{
+	if (chk_sv(sv, t, line) && **sv && !(ft_strchr(*sv, '\n')) && *rsize == 0)
+	{
+		**line = ft_strdup(*sv);
+		ft_strdel(sv);
 	}
 	return (1);
 }
@@ -62,26 +70,20 @@ int		get_next_line(const int fd, char **line)
 	rsize = 1;
 	if (!sv)
 	{
-		sv = (char *)malloc(BUFF_SIZE + 1);
-		rsize = read(fd, sv, BUFF_SIZE);
-		sv[rsize] = '\0';
-		if (rsize == 0 || (rsize == 1 && ft_strcmp(sv, "\n")))
+		sv = (char *)ft_memalloc(BUFF_SIZE + 1);
+		if (fd < 0 || (rsize = read(fd, sv, BUFF_SIZE)) == -1)
 		{
 			ft_strdel(&sv);
+			return (-1);
+		}
+		sv[rsize] = '\0';
+		if (rsize == 0)
+		{
+			ft_strdel(&sv);
+			*line = NULL;
 			return (0);
 		}
 	}
 	read_line(&sv, &rsize, &t, fd);
-	if (rsize < 0)
-	{
-		if (*sv)
-			ft_strdel(&sv);
-		return (-1);
-	}
-	if (chk_sv(&sv, &t, &line) && *sv && !(ft_strchr(sv, '\n')) && rsize == 0)
-	{
-		*line = ft_strdup(sv);
-		ft_strdel(&sv);
-	}
-	return (1);
+	return (reset(&sv, &t, &line, &rsize));
 }

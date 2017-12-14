@@ -1,16 +1,31 @@
 #include "filler.h"
 #include <fcntl.h>
+#include <stdlib.h>
 int		main(void)
 {
-	//char	*line;
+	char	*line;
 	int		fd;
+	int		i = 0;
 	char	*filename;
 
-	//get_next_line(1, &line);
 	filename = "logger.txt";
-	fd = open(filename, O_RDONLY);
-	ft_putendl_fd("test", fd);
-	ft_putendl("test");
-	close(fd);
+	system("rm logger.txt; touch logger.txt");
+	while(i < 21)
+	{
+		get_next_line(0, &line);
+		fd = open(filename, O_RDWR | O_APPEND);
+		ft_putendl_fd(line, fd);
+		close(fd);
+		i++;
+	}
+	ft_putendl("8 2");
+	while(i < 100)
+	{
+		get_next_line(0, &line);
+		fd = open(filename, O_RDWR | O_APPEND);
+		ft_putendl_fd(line, fd);
+		close(fd);
+		i++;
+	}
 	return(0);
 }
