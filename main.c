@@ -57,30 +57,44 @@ char 	**get_piece(int px)
 	return(piece);
 }
 
-int 	check_move()
+void 	get_move(char **map, char **piece)
 {
+	int     flag;
+	int 	mx;
+	int 	my;
+	int 	px;
+	int 	py;
 
-}
-
-int 	get_move(char **map, char **piece, int *x, int *y)
-{
-	int 	x;
-	int 	y;
-
-	x = 0;
-	while (map[x][y])
+	flag = 0;
+	mx = 0;
+	my = 0;
+	while (map[mx] && flag = 0)
 	{
-		y = 0;
-		while (map[x][y] != 'O' || map[x][y] != 'o')
-			y++;
-		x++;
+		mx++;
+		my = 0;
+		while ((map[mx][my] != 'O' || map[mx][my] != 'o') && map[mx][my])
+			my++;
+		if ((map[mx][my] == 'O' || map[mx][my] == 'o'))
+			flag = 1;
 	}
-	check_move(x, y);
+	px = 0;
+	while (piece[px])
+	{
+		py = 0;
+		while (piece[px][py])
+		{
+			py++;
+		}
+		px++;
+	}
+	ft_putnbr(mx);
+	ft_putstr(" ");
+	ft_putnbr(my);
 }
 
 int		main(void)
 {
-	int 	i;
+	// int 	i;
 	int 	p;
 	int 	x;
 	int		y;
@@ -94,7 +108,7 @@ int		main(void)
 	map = get_map(x);
 	get_input(&px, &py);
 	piece = get_piece(px);
-	get_move(map, piece, &x, &y);
+	get_move(map, piece);
 	return (0);
 }
 
