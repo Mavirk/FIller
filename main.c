@@ -50,69 +50,203 @@ char 	**get_piece(int px)
 	piece[px] = 0;
 	while (cx < (px - 1))
 	{
+		cx++;
 		get_next_line(0, &line);
-		piece[++cx] = ft_strsplit((const char *)line, ' ')[0];
+		piece[cx] = ft_strdup(line);
 		ft_strdel(&line);
+		
 	}
 	return(piece);
 }
 
-void 	get_move(char **map, char **piece)
+int 	is_valid(char **map, char **piece, t_vars mdim, t_vars pdim)
+{
+	int 	overlap;
+
+	overlap = 0;
+
+ft_putendl("---------------------------is_valid---------------------------");
+	while (pdim.x < pdim.ht)
+	{
+		pdim.y = 0;
+		while (pdim.y < pdim.wt && overlap < 2)
+		{
+			if (piece[pdim.x][pdim.y] == '*')
+			{
+					// ft_putendl("1");
+				if (!((mdim.x + pdim.x) >= 0 && (mdim.x + pdim.x) <= mdim.x) && 
+					((mdim.y + pdim.y) >= 0 && (mdim.y + pdim.y) <= mdim.y))
+					return (-1);	
+				if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'X' || 
+					map[mdim.x + pdim.x][mdim.y + pdim.y] == 'x')
+					return (-1);	
+				if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'O' || 
+					map[mdim.x + pdim.x][mdim.y + pdim.y] == 'o')	
+					overlap++;	
+if (overlap == 1)
+	ft_putendl("shitcuntfuck");
+			}
+			pdim.y++;
+		}
+		pdim.x++;
+	}
+
+	if (overlap == 1)
+	{
+
+		ft_putnbr(mdim.x);
+		ft_putstr(" ");
+		ft_putnbr(mdim.y + 1);
+		ft_putendl("");
+	}
+	if (overlap == 1)
+	{
+		ft_putendl("+++++++++++++++++++++++++++++++++++variables+++++++++++++++++++++++++++++++++++");
+		ft_putstr("mdim.ht :");
+		ft_putnbr(mdim.ht);
+		ft_putendl("");
+		ft_putstr("mdim.wt :");
+		ft_putnbr(mdim.wt);
+		ft_putendl("");
+		ft_putstr("mdim.x :");
+		ft_putnbr(mdim.x);
+		ft_putendl("");
+		ft_putstr("mdim.y :");
+		ft_putnbr(mdim.y);
+		ft_putendl("");
+		ft_putstr("pdim.ht :");
+		ft_putnbr(pdim.ht);
+		ft_putendl("");
+		ft_putstr("pdim.wt :");
+		ft_putnbr(pdim.wt);
+		ft_putendl("");
+		ft_putstr("pdim.x :");
+		ft_putnbr(pdim.x);
+		ft_putendl("");
+		ft_putstr("pdim.y :");
+		ft_putnbr(pdim.y);
+		ft_putendl("");
+		ft_putstr("overlap :");
+		ft_putnbr(overlap);
+		ft_putendl("");	
+	}
+	return (overlap); 
+}
+
+int 	check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
 {
 	int     flag;
-	int 	mx;
-	int 	my;
-	int 	px;
-	int 	py;
 
 	flag = 0;
-	mx = 0;
-	my = 0;
-	while (map[mx] && flag = 0)
+	pdim.x = 0;
+	pdim.y = 0;
+
+
+	while (flag == 0 && mdim.x < mdim.ht)
 	{
-		mx++;
-		my = 0;
-		while ((map[mx][my] != 'O' || map[mx][my] != 'o') && map[mx][my])
-			my++;
-		if ((map[mx][my] == 'O' || map[mx][my] == 'o'))
-			flag = 1;
-	}
-	px = 0;
-	while (piece[px])
-	{
-		py = 0;
-		while (piece[px][py])
+		mdim.y = 0;
+		while (flag == 0 && mdim.x < mdim.ht && mdim.y < mdim.wt)
 		{
-			py++;
+			if (is_valid(map, piece, mdim, pdim) == 1)
+				flag = 1;
+			mdim.y++;
 		}
-		px++;
+		mdim.x++;	
 	}
-	ft_putnbr(mx);
-	ft_putstr(" ");
-	ft_putnbr(my);
+	if (flag == 1)
+	{
+		return(1);
+	}
+	return (0);
 }
 
 int		main(void)
 {
-	// int 	i;
 	int 	p;
-	int 	x;
-	int		y;
-	int 	px;
-	int 	py;
 	char	**map;
 	char 	**piece;
+	t_vars	mdim;
+	t_vars	pdim;
 
 	get_player(&p);
-	get_input(&x, &y);
-	map = get_map(x);
-	get_input(&px, &py);
-	piece = get_piece(px);
-	get_move(map, piece);
-	return (0);
+	get_input(&mdim.ht, &mdim.wt);
+	map = get_map(mdim.ht);
+	get_input(&pdim.ht, &pdim.wt);
+	piece = get_piece(pdim.ht);
+	check_move (map, piece, mdim, pdim);
+
+	return(0);
 }
 
+	
+	// ft_putendl("+++++++++++++++++++++++++++++++++++variables+++++++++++++++++++++++++++++++++++");
+	// ft_putstr("mdim.ht :");
+	// ft_putnbr(mdim.ht);
+	// ft_putendl("");
+	// ft_putstr("mdim.wt :");
+	// ft_putnbr(mdim.wt);
+	// ft_putendl("");
+	// ft_putstr("mdim.x :");
+	// ft_putnbr(mdim.x);
+	// ft_putendl("");
+	// ft_putstr("mdim.y :");
+	// ft_putnbr(mdim.y);
+	// ft_putendl("");
+	// ft_putstr("pdim.ht :");
+	// ft_putnbr(pdim.ht);
+	// ft_putendl("");
+	// ft_putstr("pdim.wt :");
+	// ft_putnbr(pdim.wt);
+	// ft_putendl("");
+	// ft_putstr("pdim.x :");
+	// ft_putnbr(pdim.x);
+	// ft_putendl("");
+	// ft_putstr("pdim.y :");
+	// ft_putnbr(pdim.y);
+	// ft_putendl("");	
+	// ft_putchar(piece[0][0]);
+	// ft_putchar(piece[0][1]);
+	// ft_putendl("");
+	// ft_putchar(piece[1][0]);
+	// ft_putchar(piece[1][1]);
+	// ft_putendl("");
 
+	// ft_putendl("this is the map :");
+	// int i = 0;
+	// while (map[i])
+	// {
+	// 	ft_putendl(map[i]);
+	// 	i++;
+	// }
+	// ft_putendl("this is a piece :");
+	// i = 0;
+	// while (piece[i])
+	// {
+	// 	ft_putendl(piece[i]);
+	// 	i++;
+	// }
+
+// void 	get_move(char **map, int x, int y)
+// {
+// 	int     flag;
+// 	int 	mx;
+// 	int 	my;
+
+// 	flag = 0;
+// 	mx = 0;
+// 	my = 0;
+// 	while (flag == 0 && mx < x)
+// 	{
+// 		mx++;
+// 		my = 0;
+// 		while (flag == 0 && mx < x && my < y)
+// 		{
+// 			my++;
+// 			if ((map[mx][my] == 'O' || map[mx][my] == 'o'))
+// 				flag = 1;
+// 		}				
+// 	}
+// }
 
 	// ft_putendl("this is the map :");
 	// i = 0;
