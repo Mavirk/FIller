@@ -1,1 +1,6 @@
-seed = 3481
+seed = 994
+O: timedout
+./a.out: Segfault at 0
+./resources/players/champely.filler won
+Score:
+0AGAINST0

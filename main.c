@@ -53,112 +53,63 @@ char 	**get_piece(int px)
 		cx++;
 		get_next_line(0, &line);
 		piece[cx] = ft_strdup(line);
-		ft_strdel(&line);
-		
+		ft_strdel(&line);	
 	}
 	return(piece);
 }
 
 int 	is_valid(char **map, char **piece, t_vars mdim, t_vars pdim)
 {
-	int 	overlap;
-
-	overlap = 0;
-
-ft_putendl("---------------------------is_valid---------------------------");
 	while (pdim.x < pdim.ht)
 	{
 		pdim.y = 0;
-		while (pdim.y < pdim.wt && overlap < 2)
+		while (pdim.y < pdim.wt)
 		{
 			if (piece[pdim.x][pdim.y] == '*')
 			{
-					// ft_putendl("1");
-				if (!((mdim.x + pdim.x) >= 0 && (mdim.x + pdim.x) <= mdim.x) && 
-					((mdim.y + pdim.y) >= 0 && (mdim.y + pdim.y) <= mdim.y))
-					return (-1);	
-				if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'X' || 
-					map[mdim.x + pdim.x][mdim.y + pdim.y] == 'x')
-					return (-1);	
-				if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'O' || 
-					map[mdim.x + pdim.x][mdim.y + pdim.y] == 'o')	
-					overlap++;	
-if (overlap == 1)
-	ft_putendl("shitcuntfuck");
+				if (((mdim.x + pdim.x) >= 0 && (mdim.x + pdim.x) < mdim.ht) && 
+					((mdim.y + pdim.y) >= 0 && (mdim.y + pdim.y) < mdim.wt))
+				{	
+					if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'X' || 
+						map[mdim.x + pdim.x][mdim.y + pdim.y] == 'x')
+						return (-1);	
+					if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'O' || 
+						map[mdim.x + pdim.x][mdim.y + pdim.y] == 'o')	
+						return (1);
+				}
 			}
 			pdim.y++;
 		}
 		pdim.x++;
 	}
-
-	if (overlap == 1)
-	{
-
-		ft_putnbr(mdim.x);
-		ft_putstr(" ");
-		ft_putnbr(mdim.y + 1);
-		ft_putendl("");
-	}
-	if (overlap == 1)
-	{
-		ft_putendl("+++++++++++++++++++++++++++++++++++variables+++++++++++++++++++++++++++++++++++");
-		ft_putstr("mdim.ht :");
-		ft_putnbr(mdim.ht);
-		ft_putendl("");
-		ft_putstr("mdim.wt :");
-		ft_putnbr(mdim.wt);
-		ft_putendl("");
-		ft_putstr("mdim.x :");
-		ft_putnbr(mdim.x);
-		ft_putendl("");
-		ft_putstr("mdim.y :");
-		ft_putnbr(mdim.y);
-		ft_putendl("");
-		ft_putstr("pdim.ht :");
-		ft_putnbr(pdim.ht);
-		ft_putendl("");
-		ft_putstr("pdim.wt :");
-		ft_putnbr(pdim.wt);
-		ft_putendl("");
-		ft_putstr("pdim.x :");
-		ft_putnbr(pdim.x);
-		ft_putendl("");
-		ft_putstr("pdim.y :");
-		ft_putnbr(pdim.y);
-		ft_putendl("");
-		ft_putstr("overlap :");
-		ft_putnbr(overlap);
-		ft_putendl("");	
-	}
-	return (overlap); 
+	return (0); 
 }
 
 int 	check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
 {
-	int     flag;
-
-	flag = 0;
 	pdim.x = 0;
 	pdim.y = 0;
-
-
-	while (flag == 0 && mdim.x < mdim.ht)
+	while (mdim.x < mdim.ht)
 	{
 		mdim.y = 0;
-		while (flag == 0 && mdim.x < mdim.ht && mdim.y < mdim.wt)
+		while (mdim.x < mdim.ht && mdim.y < mdim.wt)
 		{
 			if (is_valid(map, piece, mdim, pdim) == 1)
-				flag = 1;
+			{
+				ft_putnbr(mdim.x);
+				ft_putstr(" ");
+				ft_putnbr(mdim.y);
+				ft_putendl("");
+				return(1);
+			}
 			mdim.y++;
 		}
 		mdim.x++;	
 	}
-	if (flag == 1)
-	{
-		return(1);
-	}
 	return (0);
 }
+
+// void	free_all(char**)
 
 int		main(void)
 {
@@ -169,6 +120,12 @@ int		main(void)
 	t_vars	pdim;
 
 	get_player(&p);
+	get_input(&mdim.ht, &mdim.wt);
+	map = get_map(mdim.ht);
+	get_input(&pdim.ht, &pdim.wt);
+	piece = get_piece(pdim.ht);
+	check_move (map, piece, mdim, pdim);
+
 	get_input(&mdim.ht, &mdim.wt);
 	map = get_map(mdim.ht);
 	get_input(&pdim.ht, &pdim.wt);
@@ -309,7 +266,45 @@ int		main(void)
 	// }
 
 
+// if (overlap == 1)
+// 	{
 
+// 		ft_putnbr(mdim.x);
+// 		ft_putstr(" ");
+// 		ft_putnbr(mdim.y + 1);
+// 		ft_putendl("");
+// 	}
+// 	if (overlap == 1)
+// 	{
+// 		ft_putendl("+++++++++++++++++++++++++++++++++++variables+++++++++++++++++++++++++++++++++++");
+// 		ft_putstr("mdim.ht :");
+// 		ft_putnbr(mdim.ht);
+// 		ft_putendl("");
+// 		ft_putstr("mdim.wt :");
+// 		ft_putnbr(mdim.wt);
+// 		ft_putendl("");
+// 		ft_putstr("mdim.x :");
+// 		ft_putnbr(mdim.x);
+// 		ft_putendl("");
+// 		ft_putstr("mdim.y :");
+// 		ft_putnbr(mdim.y);
+// 		ft_putendl("");
+// 		ft_putstr("pdim.ht :");
+// 		ft_putnbr(pdim.ht);
+// 		ft_putendl("");
+// 		ft_putstr("pdim.wt :");
+// 		ft_putnbr(pdim.wt);
+// 		ft_putendl("");
+// 		ft_putstr("pdim.x :");
+// 		ft_putnbr(pdim.x);
+// 		ft_putendl("");
+// 		ft_putstr("pdim.y :");
+// 		ft_putnbr(pdim.y);
+// 		ft_putendl("");
+// 		ft_putstr("overlap :");
+// 		ft_putnbr(overlap);
+// 		ft_putendl("");	
+// 	}
 
 
 
