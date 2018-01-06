@@ -6,7 +6,7 @@ void 	get_player(int *p)
 
 	get_next_line(0, &line);
 	*p = (ft_strsplit((const char *)line, ' ')[2][1] == '1') ? 1 : 2;
-	ft_strdel(&line);
+	free(line);
 }
 
 void	get_input(int *x, int *y)
@@ -16,43 +16,44 @@ void	get_input(int *x, int *y)
 	get_next_line(0, &line);
 	*x = ft_atoi(ft_strsplit((const char *)line, ' ')[1]);
 	*y = ft_atoi(ft_strsplit((const char *)line, ' ')[2]);
-	ft_strdel(&line);
+	free(line);
 }
 
-char	**get_map(int x)
+char	**get_map(int x, int y)
 {
 	char	**map;
 	char	*line;
 	int 	cx;
 
-	cx = -1;
-	map = (char**)ft_memalloc(x + 1);
-	map[x] = 0;
+	cx = 0;
+	map = (char**)malloc((sizeof(char*) * (x + 1)));
 	get_next_line(0, &line);
-	ft_strdel(&line);
-	while (cx < (x - 1))
+	free(line);
+	while (cx < x)
 	{
 		get_next_line(0, &line);
-		map[++cx] = ft_strsplit((const char *)line, ' ')[1];
-		ft_strdel(&line);
+		map[cx] = (char*)malloc((sizeof(char) * (y + 1)));
+		ft_strcpy(map[cx], ft_strsplit((const char *)line, ' ')[1]);
+		cx++;
+		free( line);
 	}
 	return(map);
 }
 
-char 	**get_piece(int px)
+char 	**get_piece(int px, int py)
 {
 	char	**piece;
 	char	*line;
 	int 	cx;
 
-	cx = -1;
-	piece = (char**)ft_memalloc(px + 1);
-	piece[px] = 0;
-	while (cx < (px - 1))
+	cx = 0;
+	piece = (char**)malloc((sizeof(char*) * (px + 1)));
+	while (cx < px)
 	{
-		cx++;
 		get_next_line(0, &line);
-		piece[cx] = ft_strdup(line);
+		piece[cx] = (char*)malloc((sizeof(char) * (py + 1)));
+		ft_strcpy(piece[cx], line);
+		cx++;
 		ft_strdel(&line);	
 	}
 	return(piece);
@@ -89,6 +90,7 @@ int 	check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
 {
 	pdim.x = 0;
 	pdim.y = 0;
+	mdim.x = 0;
 	while (mdim.x < mdim.ht)
 	{
 		mdim.y = 0;
@@ -120,18 +122,14 @@ int		main(void)
 	t_vars	pdim;
 
 	get_player(&p);
-	get_input(&mdim.ht, &mdim.wt);
-	map = get_map(mdim.ht);
-	get_input(&pdim.ht, &pdim.wt);
-	piece = get_piece(pdim.ht);
-	check_move (map, piece, mdim, pdim);
-
-	get_input(&mdim.ht, &mdim.wt);
-	map = get_map(mdim.ht);
-	get_input(&pdim.ht, &pdim.wt);
-	piece = get_piece(pdim.ht);
-	check_move (map, piece, mdim, pdim);
-
+	while(1 == 1)
+	{
+		get_input(&mdim.ht, &mdim.wt);
+		map = get_map(mdim.ht, mdim.wt);
+		get_input(&pdim.ht, &pdim.wt);
+		piece = get_piece(pdim.ht, pdim.wt);
+		check_move (map, piece, mdim, pdim);
+	}	
 	return(0);
 }
 
