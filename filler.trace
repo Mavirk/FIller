@@ -1,7 +1,4 @@
-seed = 5144
-X: error on input
-O: timedout
-./a.out: Segfault at 2
+seed = 7886
 ./a.out won
 Score:
-2AGAINST0
+228AGAINST0

@@ -33,11 +33,11 @@ char	**get_map(int x, int y)
 	{
 		get_next_line(0, &line);
 		map[cx] = (char*)malloc((sizeof(char) * (y + 1)));
-		ft_strcpy(map[cx], ft_strsplit((const char *)line, ' ')[1]);
+		ft_strncpy(map[cx], ft_strsplit((const char *)line, ' ')[1], y + 1);
 		cx++;
 		free( line);
 	}
-	return(map);
+	return (map);
 }
 
 char 	**get_piece(int px, int py)
@@ -56,34 +56,72 @@ char 	**get_piece(int px, int py)
 		cx++;
 		ft_strdel(&line);	
 	}
-	return(piece);
+	return (piece);
+}
+ 
+int 	space_check(char **piece, t_vars mdim, t_vars pdim)
+{
+	int 	flag;
+	int     x;
+	int 	y;
+
+	x = 0;
+	flag = 0;
+	while (x < pdim.ht && flag == 0)
+	{
+		y = 0;
+		while (y < pdim.wt && flag == 0)
+		{
+			if (piece[x][y] == '.' &&
+				((mdim.x + x) >= mdim.ht || (mdim.y + y) >= mdim.wt))
+				return (0);
+			y++;
+		}
+		x++;
+	}
+	return (1);
 }
 
 int 	is_valid(char **map, char **piece, t_vars mdim, t_vars pdim)
 {
-	while (pdim.x < pdim.ht)
+	int overlap;
+
+	overlap = 0;
+	while (pdim.x < pdim.ht && overlap <= 1)
 	{
 		pdim.y = 0;
-		while (pdim.y < pdim.wt)
+		while (pdim.y < pdim.wt && overlap <= 1)
 		{
 			if (piece[pdim.x][pdim.y] == '*')
 			{
-				if (((mdim.x + pdim.x) >= 0 && (mdim.x + pdim.x) < mdim.ht) && 
+				if (((mdim.x + pdim.x) >= 0 && (mdim.x + pdim.x + 1) < mdim.ht) && 
 					((mdim.y + pdim.y) >= 0 && (mdim.y + pdim.y) < mdim.wt))
 				{	
 					if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'X' || 
 						map[mdim.x + pdim.x][mdim.y + pdim.y] == 'x')
 						return (-1);	
 					if (map[mdim.x + pdim.x][mdim.y + pdim.y] == 'O' || 
-						map[mdim.x + pdim.x][mdim.y + pdim.y] == 'o')	
-						return (1);
+						map[mdim.x + pdim.x][mdim.y + pdim.y] == 'o')
+						overlap++;
 				}
+				if ((mdim.x + pdim.x + 1) >= mdim.ht)
+					return (0);
 			}
 			pdim.y++;
 		}
 		pdim.x++;
 	}
+	if (overlap == 1)
+		return (space_check(piece, mdim, pdim));
 	return (0); 
+}
+
+void	print_output(int x, int y)
+{
+	ft_putnbr(x);
+	ft_putstr(" ");
+	ft_putnbr(y);
+	ft_putendl("");
 }
 
 int 	check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
@@ -98,11 +136,8 @@ int 	check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
 		{
 			if (is_valid(map, piece, mdim, pdim) == 1)
 			{
-				ft_putnbr(mdim.x);
-				ft_putstr(" ");
-				ft_putnbr(mdim.y);
-				ft_putendl("");
-				return(1);
+				print_output(mdim.x, mdim.y);
+				return (1);
 			}
 			mdim.y++;
 		}
@@ -110,8 +145,6 @@ int 	check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
 	}
 	return (0);
 }
-
-// void	free_all(char**)
 
 int		main(void)
 {
@@ -122,15 +155,19 @@ int		main(void)
 	t_vars	pdim;
 
 	get_player(&p);
-	while(1 == 1)
+	get_input(&mdim.ht, &mdim.wt);
+	map = get_map(mdim.ht, mdim.wt);
+	get_input(&pdim.ht, &pdim.wt);
+	piece = get_piece(pdim.ht, pdim.wt);
+	while(check_move (map, piece, mdim, pdim) == 1)
 	{
 		get_input(&mdim.ht, &mdim.wt);
 		map = get_map(mdim.ht, mdim.wt);
 		get_input(&pdim.ht, &pdim.wt);
 		piece = get_piece(pdim.ht, pdim.wt);
-		check_move (map, piece, mdim, pdim);
 	}	
-	return(0);
+	print_output(999, 999);
+	return (0);
 }
 
 	
