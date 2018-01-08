@@ -11,7 +11,9 @@ typedef struct	s_vars
 	int	wt;
 	int	ht;
 	int	x;
-	int y;	
+	int y;
+	int hx;
+	int hy;	
 }				t_vars;
 
 #endif
