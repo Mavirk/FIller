@@ -42,13 +42,14 @@ int		is_valid(char **map, char **piece, t_vars mdim, t_vars pdim)
 	int overlap;
 
 	overlap = 0;
+	pdim.x = 0;
 	while (pdim.x < pdim.ht && overlap <= 1)
 	{
 		pdim.y = 0;
 		while (pdim.y < pdim.wt && overlap <= 1)
 		{
 			if ((piece[pdim.x][pdim.y] == '*') &&
-				((mdim.x + pdim.x) >= 0 && (mdim.x + pdim.x + 1) < mdim.ht) &&
+				((mdim.x + pdim.x) >= 0 && (mdim.x + pdim.x) < mdim.ht) &&
 				((mdim.y + pdim.y) >= 0 && (mdim.y + pdim.y) < mdim.wt))
 			{
 				if (map[mdim.x + pdim.x][mdim.y + pdim.y] == ft_toupper(pdim.hy)
@@ -83,8 +84,8 @@ int		check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
 	int		flag;
 
 	flag = 0;
-	pdim.x = 0;
-	pdim.y = 0;
+	mdim.hx = 0;
+	mdim.hy = 0;
 	mdim.x = 0;
 	while (mdim.x < mdim.ht && flag == 0)
 	{
@@ -93,11 +94,8 @@ int		check_move(char **map, char **piece, t_vars mdim, t_vars pdim)
 		{
 			if (is_valid(map, piece, mdim, pdim) == 1)
 			{
-				if (mdim.hx <= mdim.x || mdim.hy <= mdim.y)
-				{
-					mdim.hx = mdim.x;
-					mdim.hy = mdim.y;
-				}
+				mdim.hx = mdim.x;
+				mdim.hy = mdim.y;
 				flag++;
 			}
 			mdim.y++;

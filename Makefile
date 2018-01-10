@@ -16,6 +16,7 @@ FILES 	= main.c\
 			processing.c
 SRC 	= $(addprefix src/, $(FILES))
 CC 		= gcc
+CCDB 	= gcc -g
 FLAGS 	= -Wall -Wextra -Werror
 LINK	= -L libft -lft
 INCLUDE	= -I header/filler.h -I libft/libft.h
@@ -34,6 +35,9 @@ fclean: clean
 	@make fclean -C libft
 
 re: fclean all
+
+db: 
+	$(CCDB) $(FLAGS) $(SRC) libft/*.c $(INCLUDE) $(LINK) -o $(NAME)
 
 lib:
 	@make -C libft

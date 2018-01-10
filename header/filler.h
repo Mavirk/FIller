@@ -34,4 +34,5 @@ int				space_check(int overlap, char **piece,
 int				is_valid(char **map, char **piece, t_vars mdim, t_vars pdim);
 int				print_output(int x, int y, int flag);
 int				check_move(char **map, char **piece, t_vars mdim, t_vars pdim);
+// int				strats(int prevx, int prevy, t_vars mdim, t_vars pdim);
 #endif
